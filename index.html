@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Operation Save - Login & Signup</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(to right, #000000, #222222);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .wrapper {
+      text-align: center;
+    }
+
+    header {
+      margin-bottom: 20px;
+    }
+
+    header img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid white;
+    }
+
+    header h1 {
+      color: white;
+      font-size: 28px;
+      margin: 10px 0 0;
+    }
+
+    .container {
+      width: 360px;
+      padding: 30px;
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(15px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+      color: white;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      font-weight: 600;
+      font-size: 22px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      outline: none;
+    }
+
+    input::placeholder {
+      color: #cccccc;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: white;
+      color: black;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background: #dddddd;
+    }
+
+    .link {
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .link a {
+      color: white;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .message {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #ff4d4d;
+    }
+
+    @media (max-width: 420px) {
+      .container {
+        width: 90%;
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="wrapper">
+  <header>
+    <img src="Operation (512 x 512 px).png" alt="Logo" />
+    <h1>Operation Save</h1>
+  </header>
+
+  <!-- Login Form -->
+  <div class="container" id="login-form">
+    <h2>Login</h2>
+    <input type="email" id="login-email" placeholder="Email" required />
+    <input type="password" id="login-password" placeholder="Password" required />
+    <button id="login-btn">Login</button>
+    <div class="message" id="login-message"></div>
+    <div class="link">
+      Don't have an account? <a href="#" id="switch-to-signup">Sign Up</a>
+    </div>
+  </div>
+
+  <!-- Signup Form -->
+  <div class="container" id="signup-form" style="display: none;">
+    <h2>Sign Up</h2>
+    <input type="text" id="signup-name" placeholder="Full Name" required />
+    <input type="email" id="signup-email" placeholder="Email" required />
+    <input type="password" id="signup-password" placeholder="Password" required />
+    <button id="signup-btn">Sign Up</button>
+    <div class="message" id="signup-message"></div>
+    <div class="link">
+      Already have an account? <a href="#" id="switch-to-login">Login</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const loginForm = document.getElementById("login-form");
+    const signupForm = document.getElementById("signup-form");
+    const loginMessage = document.getElementById("login-message");
+    const signupMessage = document.getElementById("signup-message");
+
+    // Switch between forms
+    document.getElementById("switch-to-signup").addEventListener("click", () => {
+      loginForm.style.display = "none";
+      signupForm.style.display = "block";
+    });
+
+    document.getElementById("switch-to-login").addEventListener("click", () => {
+      signupForm.style.display = "none";
+      loginForm.style.display = "block";
+    });
+
+    // Login logic
+    document.getElementById("login-btn").addEventListener("click", () => {
+      const email = document.getElementById("login-email").value.trim();
+      const password = document.getElementById("login-password").value;
+
+      if (email && password) {
+        const users = JSON.parse(localStorage.getItem("users") || "{}");
+
+        if (!users[email]) {
+          loginMessage.textContent = "No account found with this email.";
+        } else if (users[email].password !== password) {
+          loginMessage.textContent = "Incorrect password.";
+        } else {
+          localStorage.setItem("loggedIn", "true");
+          loginMessage.style.color = "#4CAF50";
+          loginMessage.textContent = "Login successful!";
+          setTimeout(() => {
+            window.location.href = "alltabs.html";
+          }, 1500);
+        }
+      } else {
+        loginMessage.textContent = "Please enter email and password.";
+      }
+    });
+
+    // Signup logic
+    document.getElementById("signup-btn").addEventListener("click", () => {
+      const name = document.getElementById("signup-name").value.trim();
+      const email = document.getElementById("signup-email").value.trim();
+      const password = document.getElementById("signup-password").value;
+
+      if (name && email && password) {
+        const users = JSON.parse(localStorage.getItem("users") || "{}");
+
+        if (users[email]) {
+          signupMessage.textContent = "Email is already registered.";
+        } else {
+          users[email] = { name, password };
+          localStorage.setItem("users", JSON.stringify(users));
+          signupMessage.style.color = "#4CAF50";
+          signupMessage.textContent = "Account created successfully!";
+          setTimeout(() => {
+            signupForm.style.display = "none";
+            loginForm.style.display = "block";
+          }, 1500);
+        }
+      } else {
+        signupMessage.textContent = "Please fill all the fields.";
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
